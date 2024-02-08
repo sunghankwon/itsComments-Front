@@ -10,16 +10,19 @@ function App() {
       if (!token) {
         return;
       }
+      try {
+        const res = await axios.post(
+          import.meta.env.VITE_SERVER_URL,
+          { token: token },
+          { withCredentials: true },
+        );
 
-      const res = await axios.post(
-        import.meta.env.VITE_SERVER_URL,
-        { token: token },
-        { withCredentials: true },
-      );
+        const user = res.data.user;
 
-      const user = res.data.user;
-
-      setUserData(user);
+        setUserData(user);
+      } catch (error) {
+        console.log("Login error:", error);
+      }
     }
 
     verifyToken();
