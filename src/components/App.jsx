@@ -14,7 +14,7 @@ function App() {
       try {
         const res = await axios.post(
           import.meta.env.VITE_SERVER_URL,
-          { token: token },
+          { token },
           { withCredentials: true },
         );
 
@@ -37,7 +37,7 @@ function App() {
 
   if (loginCheck === "fail") {
     return (
-      <div className="font-bold m-8 text-red-500">
+      <div className="font-bold m-80 text-red-500">
         로그인에 실패하였습니다...
       </div>
     );
