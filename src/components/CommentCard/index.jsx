@@ -1,8 +1,9 @@
-export default function CommentCard({ data }) {
-  const commentCreator = data.creator.nickname;
-  const commentText = data.text;
-  const commentPostDate = new Date(data.postDate);
-  const commentScreenshot = isValidBase64(data.screenshot);
+function CommentCard({ data }) {
+  const { creator, text, postDate, screenshot } = data;
+  const commentCreator = creator.nickname;
+  const commentText = text;
+  const commentPostDate = new Date(postDate);
+  const commentScreenshot = isValidBase64(screenshot);
   const formattedDate = formatDate(commentPostDate);
 
   return (
@@ -15,7 +16,7 @@ export default function CommentCard({ data }) {
       </div>
       <img
         className="w-full h-[130px] object-cover border-t"
-        src={`${commentScreenshot}`}
+        src={commentScreenshot}
         alt="Comment Screenshot"
       />
       <div className="p-2 text-gray-500 text-xs">{formattedDate}</div>
@@ -41,3 +42,5 @@ function isValidBase64(str) {
     return false;
   }
 }
+
+export default CommentCard;
