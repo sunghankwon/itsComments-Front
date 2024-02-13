@@ -1,9 +1,17 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import Header from "./Header.jsx";
+
+import useUserStore from "../store/useUser.js";
+import Dashboard from "./Dashboard/index.jsx";
+import SingleComment from "./SingleComment/index.jsx";
+import Friends from "./Friends/index.jsx";
 
 function App() {
-  const [userData, setUserData] = useState(null);
+  const { setUserData } = useUserStore();
   const [loginCheck, setLoginCheck] = useState("loading");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("token");
@@ -22,6 +30,7 @@ function App() {
 
         setUserData(user);
         setLoginCheck("success");
+        navigate("/");
       } catch (error) {
         console.log("Login error:", error);
         setLoginCheck("fail");
@@ -44,9 +53,14 @@ function App() {
   }
 
   return (
-    <div className="font-bold m-80">
-      {userData ? `${userData.nickname}님이 로그인 하셨습니다.` : "not Login"}
-    </div>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" exact element={<Dashboard />} />
+        <Route path="/single" exact element={<SingleComment />} />
+        <Route path="/friend" exact element={<Friends />} />
+      </Routes>
+    </>
   );
 }
 
