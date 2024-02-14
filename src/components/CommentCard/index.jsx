@@ -1,16 +1,15 @@
 import formatDate from "../../utils/formatDate";
-import isValidBase64 from "../../utils/decodeBase64";
 
 function CommentCard({ data }) {
   const { creator, text, postDate, screenshot } = data;
   const commentCreator = creator.nickname;
   const commentText = text;
   const commentPostDate = new Date(postDate);
-  const commentScreenshot = isValidBase64(screenshot);
+  const commentScreenshot = screenshot;
   const formattedDate = formatDate(commentPostDate);
 
   return (
-    <div className="w-[150px] h-[220px] mt-4 ml-4 border rounded-md overflow-hidden shadow-md">
+    <div className="w-[200px] min-w-[200px] h-[220px] min-h-[220px] mt-4 ml-4 border rounded-md overflow-hidden shadow-md">
       <div className="p-2 bg-black text-center text-[#38D431] font-bold text-sm">
         {commentCreator}
       </div>
