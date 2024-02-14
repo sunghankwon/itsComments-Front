@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useUserStore from "../../store/useUser";
-import CommentsCard from "../CommentCard";
+import CommentCard from "../CommentCard";
 
 function Dashboard() {
   const { userData } = useUserStore();
@@ -11,7 +11,7 @@ function Dashboard() {
     : userData.receivedComments;
 
   const listedComments = commentsList.map((comment) => {
-    return <CommentsCard key={comment._id} data={comment} />;
+    return <CommentCard key={comment._id} data={comment} />;
   });
 
   return (
@@ -32,7 +32,7 @@ function Dashboard() {
         Received Comments
       </button>
       <div className="flex w-full h-full justify-center mt-4">
-        <div className="flex justify-center w-11/12 h-[600px] border-8 border-black rounded-lg text-center">
+        <div className="flex justify-center w-11/12 h-[600px] grid grid-cols-6 overflow-auto border-8 border-black rounded-lg text-center">
           {listedComments}
         </div>
       </div>
