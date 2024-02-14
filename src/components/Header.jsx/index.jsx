@@ -13,7 +13,7 @@ function Header() {
       </span>
       <Link to="/single">
         <button className=" ml-[5px] mr-2 text-[#38D431] text-2xl font-bold py-2 px-4 rounded">
-          Single Comment
+          SingleView
         </button>
       </Link>
       <span className="ml-[5px] mr-2 text-[#38D431] text-2xl font-bold py-2 px-4 rounded">
