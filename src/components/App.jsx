@@ -1,20 +1,31 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Header from "./Header.jsx";
 
 import useUserStore from "../store/useUser.js";
 import Dashboard from "./Dashboard/index.jsx";
-import SingleComment from "./SingleComment/index.jsx";
+import SingleView from "./SingleView/index.jsx";
 import Friends from "./Friends/index.jsx";
 
 function App() {
   const { setUserData } = useUserStore();
   const [loginCheck, setLoginCheck] = useState("loading");
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
+    function getTokenFromCookie() {
+      const cookies = document.cookie.split(";");
+      const authTokenCookie = cookies.find((cookie) =>
+        cookie.trim().startsWith("authToken="),
+      );
+
+      return authTokenCookie
+        ? authTokenCookie.trim().substring("authToken=".length)
+        : null;
+    }
+
+    const token = getTokenFromCookie();
+
     async function verifyToken() {
       if (!token) {
         setLoginCheck("fail");
@@ -30,7 +41,6 @@ function App() {
 
         setUserData(user);
         setLoginCheck("success");
-        navigate("/");
       } catch (error) {
         console.log("Login error:", error);
         setLoginCheck("fail");
@@ -57,7 +67,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" exact element={<Dashboard />} />
-        <Route path="/single" exact element={<SingleComment />} />
+        <Route path="/single" exact element={<SingleView />} />
         <Route path="/friend" exact element={<Friends />} />
       </Routes>
     </>
