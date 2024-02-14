@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useUserStore from "../../store/useUser";
 import CommentCard from "../CommentCard";
 
 function SingleView() {
   const { createdComments, receivedComments } = useUserStore().userData;
-  const commentsList = [...createdComments, ...receivedComments].sort(
-    (a, b) => new Date(b.postDate) - new Date(a.postDate),
-  );
+
+  const commentsList = useMemo(() => {
+    return [...createdComments, ...receivedComments].sort(
+      (a, b) => new Date(b.postDate) - new Date(a.postDate),
+    );
+  }, [createdComments, receivedComments]);
   const [selectComment, setSelectComment] = useState(commentsList[0]);
 
   const listedComments = commentsList.map((comment) => (
@@ -40,4 +43,5 @@ function SingleView() {
     </div>
   );
 }
+
 export default SingleView;
