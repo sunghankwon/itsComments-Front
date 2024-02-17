@@ -8,6 +8,7 @@ import useUserStore from "../../store/useUser";
 import fetchFeedComment from "../../../fetchers/fetchFeedSingleComment";
 import formatDate from "../../utils/formatDate";
 import ReComments from "../ReComments";
+import { CommentDelete } from "../Modal/CommentDelete";
 
 function FeedSingleComment() {
   const { commentId } = useParams();
@@ -20,6 +21,7 @@ function FeedSingleComment() {
     fetchFeedComment(commentId),
   );
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(true);
   const [isReCommentOpen, setReComment] = useState(false);
 
@@ -145,24 +147,38 @@ function FeedSingleComment() {
               >
                 X
               </button>
-              <p>{data.reComments.length} Comments</p>
-              <div className="border m-4 ">
-                <img
-                  className="h-8 w-8 rounded-full border"
-                  src={data.creator.icon}
-                  alt="User Icon"
-                />
-                <div className="border">
+              <p className="ml-4">{data.reComments.length} Comments</p>
+              <div className="border m-4 p-1">
+                <div className="flex items-center">
+                  <img
+                    className="h-8 w-8 rounded-full border"
+                    src={data.creator.icon}
+                    alt="User Icon"
+                  />
+                  <span className="ml-1">{data.creator.nickname}</span>
+                  {data.creator.email === userData.email ? (
+                    <button
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="ml-2 border border-black rounded-md bg-red-400 hover:bg-red-500 text-white"
+                    >
+                      삭제
+                    </button>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <div className="border p-1">
                   <p className="mt-4">{data.text}</p>
                   <p className="text-xs text-gray-500">{commentDate}</p>
                   <a
                     href={data.postUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-blue-500"
+                    className="text-xs text-blue-500 block overflow-hidden whitespace-nowrap overflow-ellipsis max-w-xs"
                   >
-                    {data.postUrl}
+                    <div className="truncate">{data.postUrl}</div>
                   </a>
+
                   <div className="border-t">
                     <button onClick={handleReComment}>reply</button>
                   </div>
@@ -170,23 +186,30 @@ function FeedSingleComment() {
               </div>
               {isReCommentOpen && listedReComments}
               {isReCommentOpen && (
-                <>
+                <div className="border border-black relative pt-1 pb-4 rounded-md">
                   <textarea
                     ref={replyTextRef}
-                    className="reply-textarea"
+                    className="reply-textarea resize-none w-full px-3 py-2 border-b-2 border-black mb-4 h-20"
                     placeholder="Write a reply..."
+                    style={{ height: "auto" }}
                   />
                   <button
                     onClick={handleReplySubmit}
-                    className="reply-button"
+                    className="reply-button absolute bottom-0 right-0 mb-1 py-1 px-2 rounded-md bg-blue-500 text-white"
                     type="submit"
                   >
                     Submit Reply
                   </button>
-                </>
+                </div>
               )}
             </div>
           </div>
+          {isDeleteModalOpen && (
+            <CommentDelete
+              commentId={commentId}
+              onClose={setIsDeleteModalOpen}
+            />
+          )}
         </div>
       )}
     </>
