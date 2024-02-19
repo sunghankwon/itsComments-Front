@@ -1,14 +1,13 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { useState, useRef } from "react";
-
 import axios from "axios";
+import { useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import useUserStore from "../../store/useUser";
-import fetchFeedComment from "../../../fetchers/fetchFeedSingleComment";
 import formatDate from "../../utils/formatDate";
 import ReComments from "../ReComments";
 import { CommentDelete } from "../Modal/CommentDelete";
+import fetchFeedSingleComment from "../../../fetchers/fetchFeedSingleComment";
 
 function FeedSingleComment() {
   const { commentId } = useParams();
@@ -17,9 +16,10 @@ function FeedSingleComment() {
 
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery(["comment", commentId], () =>
-    fetchFeedComment(commentId, userData._id),
-  );
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["comment", commentId],
+    queryFn: () => fetchFeedSingleComment(commentId, userData._id),
+  });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(true);

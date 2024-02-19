@@ -1,17 +1,19 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import useUserStore from "../../store/useUser";
-import { useNavigate } from "react-router-dom";
+import useCommentsStore from "../../store/useComments";
 
 export function CommentDelete({ commentId, onClose }) {
   const { userData } = useUserStore();
+  const { setUserComments } = useCommentsStore();
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleDeleteComment = async () => {
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `${import.meta.env.VITE_SERVER_URL}/comments/${commentId}`,
         {
           data: {
@@ -20,6 +22,9 @@ export function CommentDelete({ commentId, onClose }) {
           withCredentials: true,
         },
       );
+
+      setUserComments(response.data.allComments);
+
       navigate("/");
       onClose(false);
     } catch (error) {
