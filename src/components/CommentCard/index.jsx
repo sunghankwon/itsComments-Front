@@ -2,7 +2,7 @@ import formatDate from "../../utils/formatDate";
 
 function CommentCard({ data }) {
   const { creator, text, postDate, screenshot } = data;
-  const commentCreator = creator.nickname;
+  const commentCreator = creator.nickname || "알 수 없는 사용자";
   const commentText = text;
   const commentPostDate = new Date(postDate);
   const commentScreenshot = screenshot;
