@@ -79,10 +79,9 @@ export function SingleComment() {
         text: replyTextRef.current.value,
         postDate: replyCommentTime,
         commentId,
-        action: "update",
       };
 
-      const response = await axios.patch(
+      const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/comments/recomments`,
         replyData,
         {
@@ -116,13 +115,12 @@ export function SingleComment() {
         userId: userData._id,
         commentId,
         replyId,
-        action: "delete",
       };
 
-      const response = await axios.patch(
+      const response = await axios.delete(
         `${import.meta.env.VITE_SERVER_URL}/comments/recomments`,
-        requestData,
         {
+          data: requestData,
           headers: {
             "Content-Type": "application/json",
           },
@@ -171,7 +169,7 @@ export function SingleComment() {
               <div className="flex flex-grow ml-2">
                 <img
                   src={feedCommentData.screenshot}
-                  className="w-auto h-full max-h-[600px] border rounded-md"
+                  className="w-auto h-full max-h-[550px] border rounded-md"
                   alt="Screenshot"
                 />
               </div>
