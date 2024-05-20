@@ -18,7 +18,7 @@ function SingleView() {
 
   useEffect(() => {
     if (selectComment) {
-      setScrollCoordinate(parseInt(selectComment.postCoordinate.y, 10) - 200);
+      setScrollCoordinate(parseInt(selectComment.postCoordinate.y, 10) - 100);
     }
   }, [selectComment]);
 
