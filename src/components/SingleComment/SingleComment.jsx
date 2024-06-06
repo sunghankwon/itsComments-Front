@@ -156,11 +156,23 @@ export function SingleComment() {
     return str;
   }
 
+  const handleOutsideClick = (event) => {
+    if (event.target.classList.contains("modal-overlay")) {
+      navigate("/");
+    }
+  };
+
   return (
     <>
       {isModalOpen && (
-        <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50">
-          <div className="relative flex items-start w-3/4 p-4 bg-white rounded-lg h-3/4">
+        <div
+          className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-gray-500 bg-opacity-50 modal-overlay"
+          onClick={handleOutsideClick}
+        >
+          <div
+            className="relative flex items-start w-3/4 p-4 bg-white rounded-lg h-3/4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="w-5/6">
               <div className="ml-2">
                 <p className="font-bold">{feedCommentData.nickname}</p>
