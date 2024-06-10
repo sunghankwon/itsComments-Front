@@ -32,7 +32,7 @@ describe("CommentDetail Component", () => {
   it("renders CommentDetail component with proper data", () => {
     render(
       <CommentDetail
-        feedCommentData={mockCommentData}
+        receivedCommentData={mockCommentData}
         setIsDeleteModalOpen={mockSetIsDeleteModalOpen}
         scrollCoordinate={mockScrollCoordinate}
         truncateString={mockTruncateString}
@@ -53,7 +53,7 @@ describe("CommentDetail Component", () => {
   it("renders delete button if the comment creator is the same as the logged-in user", () => {
     render(
       <CommentDetail
-        feedCommentData={mockCommentData}
+        receivedCommentData={mockCommentData}
         setIsDeleteModalOpen={mockSetIsDeleteModalOpen}
         scrollCoordinate={mockScrollCoordinate}
         truncateString={mockTruncateString}
@@ -69,7 +69,7 @@ describe("CommentDetail Component", () => {
   it("does not render delete button if the comment is not from the current user", () => {
     render(
       <CommentDetail
-        feedCommentData={{
+        receivedCommentData={{
           ...mockCommentData,
           creator: {
             ...mockCommentData.creator,

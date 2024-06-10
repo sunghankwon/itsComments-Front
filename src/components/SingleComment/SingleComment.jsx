@@ -15,17 +15,17 @@ export function SingleComment() {
   const replyTextRef = useRef(null);
   const navigate = useNavigate();
 
-  const [feedCommentData, setFeedCommentData] = useState(null);
+  const [receivedComment, setReceivedComment] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(true);
   const [isReCommentOpen, setReComment] = useState(false);
   const [scrollCoordinate, setScrollCoordinate] = useState(null);
 
   useEffect(() => {
-    if (feedCommentData) {
-      setScrollCoordinate(parseInt(feedCommentData.postCoordinate.y, 10) - 200);
+    if (receivedComment) {
+      setScrollCoordinate(parseInt(receivedComment.postCoordinate.y, 10) - 200);
     }
-  }, [feedCommentData]);
+  }, [receivedComment]);
 
   const closeModal = () => {
     setModalOpen(false);
@@ -47,7 +47,7 @@ export function SingleComment() {
           commentId,
           userData._id,
         );
-        setFeedCommentData(commentData);
+        setReceivedComment(commentData);
       } catch (error) {
         console.error("Error fetching comment:", error.message);
       }
@@ -63,7 +63,7 @@ export function SingleComment() {
 
     eventSource.addEventListener("message", (event) => {
       const commentDataUpdate = JSON.parse(event.data);
-      setFeedCommentData(commentDataUpdate);
+      setReceivedComment(commentDataUpdate);
     });
 
     return () => {
@@ -104,7 +104,7 @@ export function SingleComment() {
   const handleDeleteReply = async (replyUserId, replyId) => {
     try {
       if (
-        (feedCommentData.creator._id !== replyUserId &&
+        (receivedComment.creator._id !== replyUserId &&
           replyUserId !== userData._id) ||
         !userData
       ) {
@@ -135,13 +135,13 @@ export function SingleComment() {
     }
   };
 
-  if (!feedCommentData) {
+  if (!receivedComment) {
     return <div>Loading....</div>;
   }
 
   const listedReComments =
     isReCommentOpen &&
-    feedCommentData.reComments.map((reComment) => (
+    receivedComment.reComments.map((reComment) => (
       <ReComments
         key={reComment._id}
         reComment={reComment}
@@ -175,12 +175,12 @@ export function SingleComment() {
           >
             <div className="w-5/6">
               <div className="ml-2">
-                <p className="font-bold">{feedCommentData.nickname}</p>
-                <p className="text-gray-500">{feedCommentData.email}</p>
+                <p className="font-bold">{receivedComment.nickname}</p>
+                <p className="text-gray-500">{receivedComment.email}</p>
               </div>
               <div className="flex flex-grow ml-2">
                 <img
-                  src={feedCommentData.screenshot}
+                  src={receivedComment.screenshot}
                   className="w-auto h-full max-h-[550px] border rounded-md"
                   alt="Screenshot"
                 />
@@ -194,10 +194,11 @@ export function SingleComment() {
                 X
               </button>
               <p className="ml-4">
-                {feedCommentData.reComments.length} Comments
+                {receivedComment.reComments.length} Comments
               </p>
               <CommentDetail
-                feedCommentData={feedCommentData}
+                commentId={commentId}
+                receivedComment={receivedComment}
                 setIsDeleteModalOpen={setIsDeleteModalOpen}
                 scrollCoordinate={scrollCoordinate}
                 truncateString={truncateString}
@@ -206,7 +207,6 @@ export function SingleComment() {
               {isReCommentOpen && listedReComments}
               {isReCommentOpen && (
                 <ReplySection
-                  isReCommentOpen={isReCommentOpen}
                   replyTextRef={replyTextRef}
                   handleReplySubmit={handleReplySubmit}
                 />
