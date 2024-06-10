@@ -1,48 +1,118 @@
-import React from "react";
+import { useState } from "react";
+import axios from "axios";
 
 import useUserStore from "../../store/useUser";
 import formatDate from "../../utils/formatDate";
+import useCommentsStore from "../../store/useComments";
 
 export function CommentDetail({
-  feedCommentData,
+  commentId,
+  receivedComment,
   setIsDeleteModalOpen,
   scrollCoordinate,
   truncateString,
   handleReComment,
 }) {
   const { userData } = useUserStore();
+  const { setUserCreatedComments, setUserReceivedComments } =
+    useCommentsStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState(receivedComment.text);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const commentDate = formatDate(new Date(feedCommentData.postDate));
+  const commentDate = formatDate(new Date(receivedComment.postDate));
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = async () => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_SERVER_URL}/comments/${commentId}`,
+        {
+          userId: userData._id,
+          changedComment: editedText,
+        },
+        { withCredentials: true },
+      );
+
+      setUserCreatedComments(response.data.allComments.createdComments);
+      setUserReceivedComments(response.data.allComments.receivedComments);
+      setEditedText(response.data.comment.text);
+      setIsEditing(false);
+    } catch (error) {
+      setErrorMessage("댓글 수정에 실패하였습니다.");
+    }
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    setEditedText(receivedComment.text);
+  };
 
   return (
     <div className="border w-[93%] border-[#333] relative ml-4 mt-2 p-1 pb-3 rounded-md">
       <div className="flex items-center">
         <img
           className="w-8 h-8 border rounded-full"
-          src={feedCommentData.creator.icon}
+          src={receivedComment.creator.icon}
           alt="User Icon"
         />
-        <span className="ml-1">{feedCommentData.creator.nickname}</span>
-        {feedCommentData.creator.email === userData.email ? (
-          <button
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="items-end ml-2"
-          >
-            🗑️
-          </button>
+        <span className="ml-1">{receivedComment.creator.nickname}</span>
+        {receivedComment.creator.email === userData.email ? (
+          <div className="flex items-end justify-end ml-auto">
+            <button title="수정" onClick={handleEditClick} className="ml-2">
+              🖊️
+            </button>
+            <button
+              title="삭제"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="ml-2 mr-2"
+            >
+              🗑️
+            </button>
+          </div>
         ) : (
           <></>
         )}
       </div>
       <div className="p-1 border">
-        <p className="mt-2">{feedCommentData.text}</p>
+        {isEditing ? (
+          <textarea
+            className="w-full p-2 mt-2 border rounded-md"
+            value={editedText}
+            onChange={(e) => setEditedText(e.target.value)}
+          />
+        ) : (
+          <p className="mt-2">{editedText}</p>
+        )}
+        {isEditing && (
+          <>
+            <div className="flex items-end justify-end ml-auto">
+              <button
+                className="px-2 py-1 text-white bg-green-500 rounded-md hover:bg-green-700"
+                onClick={handleSaveClick}
+              >
+                수정
+              </button>
+              <button
+                className="px-2 py-1 ml-1 text-white bg-red-500 rounded-md hover:bg-red-700"
+                onClick={handleCancelClick}
+              >
+                취소
+              </button>
+            </div>
+            <p className="items-center text-red-500">{errorMessage}</p>
+          </>
+        )}
         <p className="text-xs text-gray-500">{commentDate}</p>
         <a
-          href={`${feedCommentData.postUrl}?scroll=${scrollCoordinate}`}
+          href={`${receivedComment.postUrl}?scroll=${scrollCoordinate}`}
           rel="noopener noreferrer"
           className="block max-w-xs overflow-hidden text-xs text-blue-500 whitespace-nowrap overflow-ellipsis"
         >
-          {truncateString(feedCommentData.postUrl, 20)}
+          {truncateString(receivedComment.postUrl, 20)}
         </a>
         <div className="border-t">
           <button onClick={handleReComment}>reply</button>
