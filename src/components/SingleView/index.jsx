@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import useCommentsStore from "../../store/useComments";
 import CommentCard from "../CommentCard";
 
 function SingleView() {
-  const { createdComments, receivedComments } = useCommentsStore().userComments;
+  const { createdComments, receivedComments } = useCommentsStore();
 
   const commentsList = useMemo(() => {
     return [...createdComments, ...receivedComments].sort(

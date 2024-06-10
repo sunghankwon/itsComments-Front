@@ -12,7 +12,11 @@ import { SingleComment } from "./SingleComment/SingleComment.jsx";
 
 function App() {
   const { setUserData } = useUserStore();
-  const { setUserComments } = useCommentsStore();
+  const {
+    setUserCreatedComments,
+    setUserFeedComments,
+    setUserReceivedComments,
+  } = useCommentsStore();
   const [loginCheck, setLoginCheck] = useState("loading");
 
   useEffect(() => {
@@ -43,11 +47,9 @@ function App() {
         const user = res.data.user;
 
         setUserData(user);
-        setUserComments({
-          createdComments: user.createdComments,
-          feedComments: user.feedComments,
-          receivedComments: user.receivedComments,
-        });
+        setUserCreatedComments(user.createdComments);
+        setUserFeedComments(user.feedComments);
+        setUserReceivedComments(user.receivedComments);
 
         setLoginCheck("success");
       } catch (error) {
@@ -76,7 +78,7 @@ function App() {
       <Header className="fixed top-0 left-0" />
       <div className="w-full h-full">
         <Routes>
-          <Route path="/" exact element={<Dashboard />} />
+          <Route path="/" exact element={<Dashboard key={new Date()} />} />
           <Route path="/single" exact element={<SingleView />} />
           <Route path="/friend" exact element={<Friends />} />
           <Route
