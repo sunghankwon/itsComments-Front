@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useUserStore from "../../store/useUser";
@@ -7,7 +7,8 @@ import useCommentsStore from "../../store/useComments";
 
 export function CommentDelete({ commentId, onClose }) {
   const { userData } = useUserStore();
-  const { setUserComments } = useCommentsStore();
+  const { setUserCreatedComments, setUserReceivedComments } =
+    useCommentsStore();
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -23,7 +24,8 @@ export function CommentDelete({ commentId, onClose }) {
         },
       );
 
-      setUserComments(response.data.allComments);
+      setUserCreatedComments(response.data.allComments.createdComments);
+      setUserReceivedComments(response.data.allComments.receivedComments);
 
       navigate("/");
       onClose(false);
