@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import useCommentsStore from "../../store/useComments";
 import CommentCard from "../CommentCard";
 
 function Dashboard() {
-  const { userComments } = useCommentsStore();
+  const { createdComments, receivedComments } = useCommentsStore();
   const [isMyComment, setIsMyComment] = useState(true);
+  const [commentsList, setCommentsList] = useState([]);
   const navigate = useNavigate();
 
-  const commentsList = isMyComment
-    ? userComments.createdComments
-    : userComments.receivedComments;
+  useEffect(() => {
+    const updatedCommentsList = isMyComment
+      ? createdComments
+      : receivedComments;
+    setCommentsList(updatedCommentsList);
+  }, [isMyComment, createdComments, receivedComments]);
 
   function navigateToCommentPage(commentId) {
     navigate(`/comments/${commentId}`);
