@@ -12,11 +12,8 @@ import { SingleComment } from "./SingleComment/SingleComment.jsx";
 
 function App() {
   const { setUserData } = useUserStore();
-  const {
-    setUserCreatedComments,
-    setUserFeedComments,
-    setUserReceivedComments,
-  } = useCommentsStore();
+  const { setUserCreatedComments, setUserReceivedComments } =
+    useCommentsStore();
   const [loginCheck, setLoginCheck] = useState("loading");
 
   useEffect(() => {
@@ -48,7 +45,6 @@ function App() {
 
         setUserData(user);
         setUserCreatedComments(user.createdComments);
-        setUserFeedComments(user.feedComments);
         setUserReceivedComments(user.receivedComments);
 
         setLoginCheck("success");

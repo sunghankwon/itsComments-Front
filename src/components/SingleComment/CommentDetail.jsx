@@ -37,8 +37,7 @@ export function CommentDetail({
         { withCredentials: true },
       );
 
-      setUserCreatedComments(response.data.allComments.createdComments);
-      setUserReceivedComments(response.data.allComments.receivedComments);
+      setUserCreatedComments(response.data.createdComments);
       setEditedText(response.data.comment.text);
       setIsEditing(false);
     } catch (error) {
