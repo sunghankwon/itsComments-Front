@@ -1,30 +1,15 @@
-import axios from "axios";
 import { useState } from "react";
-
 import useUserStore from "../../store/useUser";
-import useFriendsStore from "../../store/useFriends";
+import useFriendDelete from "../../hooks/useFriendDelete";
 
 export function FriendDelete({ friendId, onClose }) {
   const { userData } = useUserStore();
-  const { setFriendsList } = useFriendsStore();
-  const [errorMessage, setErrorMessage] = useState("");
+  const { deleteFriend, errorMessage } = useFriendDelete();
 
-  async function handleCloseModal(userId, friendId) {
-    try {
-      const res = await axios.patch(
-        `${import.meta.env.VITE_SERVER_URL}/friends/delete`,
-        {
-          userId,
-          friendId,
-        },
-        { withCredentials: true },
-      );
-
-      setFriendsList(res.data.friends);
+  async function handleDelete() {
+    const result = await deleteFriend(userData._id, friendId);
+    if (result.success) {
       onClose(false);
-    } catch (error) {
-      setErrorMessage("삭제에 실패하였습니다.");
-      console.log(error);
     }
   }
 
@@ -34,7 +19,7 @@ export function FriendDelete({ friendId, onClose }) {
         <p>삭제하시겠습니까?</p>
         <p>{errorMessage}</p>
         <button
-          onClick={() => handleCloseModal(userData._id, friendId)}
+          onClick={handleDelete}
           className="px-4 py-2 mr-2 text-white bg-red-500 border border-red-700 rounded-md"
         >
           삭제
@@ -49,3 +34,5 @@ export function FriendDelete({ friendId, onClose }) {
     </div>
   );
 }
+
+export default FriendDelete;
