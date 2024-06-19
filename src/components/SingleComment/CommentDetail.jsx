@@ -1,9 +1,6 @@
-import { useState } from "react";
-import axios from "axios";
-
 import useUserStore from "../../store/useUser";
 import formatDate from "../../utils/formatDate";
-import useCommentsStore from "../../store/useComments";
+import useEditComment from "../../hooks/useEditComment";
 
 export function CommentDetail({
   commentId,
@@ -14,41 +11,17 @@ export function CommentDetail({
   handleReComment,
 }) {
   const { userData } = useUserStore();
-  const { setUserCreatedComments, setUserReceivedComments } =
-    useCommentsStore();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(receivedComment.text);
-  const [errorMessage, setErrorMessage] = useState("");
-
   const commentDate = formatDate(new Date(receivedComment.postDate));
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveClick = async () => {
-    try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_SERVER_URL}/comments/${commentId}`,
-        {
-          userId: userData._id,
-          changedComment: editedText,
-        },
-        { withCredentials: true },
-      );
-
-      setUserCreatedComments(response.data.createdComments);
-      setEditedText(response.data.comment.text);
-      setIsEditing(false);
-    } catch (error) {
-      setErrorMessage("댓글 수정에 실패하였습니다.");
-    }
-  };
-
-  const handleCancelClick = () => {
-    setIsEditing(false);
-    setEditedText(receivedComment.text);
-  };
+  const {
+    isEditing,
+    editedText,
+    errorMessage,
+    setEditedText,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+  } = useEditComment(receivedComment.text, commentId);
 
   return (
     <div className="border w-[93%] border-[#333] relative ml-4 mt-2 p-1 pb-3 rounded-md">
