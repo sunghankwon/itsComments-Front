@@ -1,41 +1,25 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import useUserStore from "../../store/useUser";
 import useFriendsStore from "../../store/useFriends";
 import FriendCard from "../FriendCard";
+import ListRenderer from "../ListLender";
 import { FriendAdd } from "../Modal/FriendAdd";
+import useFetchFriends from "../../hooks/useFetchFriends";
 
 function Friends() {
   const { userData } = useUserStore();
-  const { friendsList, setFriendsList } = useFriendsStore();
+  const { friendsList } = useFriendsStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  useEffect(() => {
-    async function getFriends() {
-      const user = { id: userData._id };
+  useFetchFriends();
 
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/friends`,
-          {
-            params: user,
-          },
-          { withCredentials: true },
-        );
-
-        setFriendsList(res.data.friends);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    getFriends();
-  }, []);
-
-  const listedFriends = friendsList.map((friend) => {
-    return <FriendCard key={friend._id} data={friend} />;
-  });
+  const listedFriends = (
+    <ListRenderer
+      list={friendsList}
+      renderItem={(friend) => <FriendCard key={friend._id} data={friend} />}
+    />
+  );
 
   return (
     <>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCommentsStore from "../../store/useComments";
 import CommentCard from "../CommentCard";
+import ListRenderer from "../ListLender";
 
 function Dashboard() {
   const { createdComments, receivedComments } = useCommentsStore();
@@ -20,11 +21,13 @@ function Dashboard() {
     navigate(`/comments/${commentId}`);
   }
 
-  const listedComments = commentsList.map((comment) => (
-    <div key={comment._id} onClick={() => navigateToCommentPage(comment._id)}>
-      <CommentCard data={comment} />
-    </div>
-  ));
+  const listedComments = (
+    <ListRenderer
+      list={commentsList}
+      renderItem={(comment) => <CommentCard key={comment._id} data={comment} />}
+      onItemClicked={navigateToCommentPage}
+    />
+  );
 
   return (
     <section className="relative w-full h-full">
