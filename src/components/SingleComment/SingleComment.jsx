@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useUserStore from "../../store/useUser";
 import ReComments from "../ReComments";
 import { CommentDelete } from "../Modal/CommentDelete";
-import fetchFeedSingleComment from "../../../fetchers/fetchFeedSingleComment";
+import useCommentData from "../../hooks/useCommentData";
 import { ReplySection } from "./ReplySection";
 import { CommentDetail } from "./CommentDetail";
 
@@ -15,10 +15,13 @@ export function SingleComment() {
   const replyTextRef = useRef(null);
   const navigate = useNavigate();
 
-  const [receivedComment, setReceivedComment] = useState(null);
+  const { receivedComment, isReCommentOpen, toggleReComment } = useCommentData(
+    commentId,
+    userData._id,
+  );
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(true);
-  const [isReCommentOpen, setReComment] = useState(false);
   const [scrollCoordinate, setScrollCoordinate] = useState(null);
 
   useEffect(() => {
@@ -31,45 +34,6 @@ export function SingleComment() {
     setModalOpen(false);
     navigate(-1);
   };
-
-  const handleReComment = () => {
-    if (isReCommentOpen) {
-      setReComment(false);
-    } else {
-      setReComment(true);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const commentData = await fetchFeedSingleComment(
-          commentId,
-          userData._id,
-        );
-        setReceivedComment(commentData);
-      } catch (error) {
-        console.error("Error fetching comment:", error.message);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const eventSource = new EventSource(
-      `${import.meta.env.VITE_SERVER_URL}/comments/recomments/comments-recomments-stream/${commentId}`,
-    );
-
-    eventSource.addEventListener("message", (event) => {
-      const commentDataUpdate = JSON.parse(event.data);
-      setReceivedComment(commentDataUpdate);
-    });
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
 
   const handleReplySubmit = async () => {
     const replyCommentTime = new Date();
@@ -202,7 +166,7 @@ export function SingleComment() {
                 setIsDeleteModalOpen={setIsDeleteModalOpen}
                 scrollCoordinate={scrollCoordinate}
                 truncateString={truncateString}
-                handleReComment={handleReComment}
+                handleReComment={toggleReComment}
               />
               {isReCommentOpen && listedReComments}
               {isReCommentOpen && (
