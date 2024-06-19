@@ -1,36 +1,14 @@
-import axios from "axios";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import useUserStore from "../../store/useUser";
-import useCommentsStore from "../../store/useComments";
+import useCommentDelete from "../../hooks/useCommentDelete";
 
 export function CommentDelete({ commentId, onClose }) {
-  const { userData } = useUserStore();
-  const { setUserCreatedComments, setUserReceivedComments } =
-    useCommentsStore();
-  const [errorMessage, setErrorMessage] = useState("");
+  const { deleteComment, errorMessage } = useCommentDelete(commentId, onClose);
   const navigate = useNavigate();
 
   const handleDeleteComment = async () => {
-    try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_SERVER_URL}/comments/${commentId}`,
-        {
-          data: {
-            userId: userData._id,
-          },
-          withCredentials: true,
-        },
-      );
-
-      setUserCreatedComments(response.data.allComments.createdComments);
-      setUserReceivedComments(response.data.allComments.receivedComments);
-
+    const result = await deleteComment();
+    if (result.success) {
       navigate("/");
-      onClose(false);
-    } catch (error) {
-      setErrorMessage("삭제에 실패하였습니다.");
     }
   };
 
@@ -41,7 +19,7 @@ export function CommentDelete({ commentId, onClose }) {
         <p>{errorMessage}</p>
         <div className="flex justify-center mt-4">
           <button
-            onClick={() => handleDeleteComment()}
+            onClick={handleDeleteComment}
             className="px-4 py-2 mr-2 text-white bg-red-500 border border-red-700 rounded-md"
           >
             삭제
@@ -57,3 +35,5 @@ export function CommentDelete({ commentId, onClose }) {
     </div>
   );
 }
+
+export default CommentDelete;
